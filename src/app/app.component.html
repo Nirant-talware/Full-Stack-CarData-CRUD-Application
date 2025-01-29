@@ -1,0 +1,217 @@
+<div class="container">
+  <div class="Old" *ngIf="isNewUser === false">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <div class="row">
+            <div class="col-6">
+              <h4>Car List</h4>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-success" (click)="changeView()">
+                Add New Car
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body" *ngIf="carList && carList.length > 0">
+          <div class="row">
+            <div
+              *ngFor="let item of carList; let i = index"
+              class="col-md-3 mb-4"
+            >
+              <div class="card shadow-sm">
+                <div class="card-body" (click)="onViewImage(item)">
+                  <img
+                    *ngIf="item.ImageUrl"
+                    [src]="item.ImageUrl"
+                    class="card-img-top"
+                    alt="{{ item.Comp_Name }} {{ item.Car_Name }} Image"
+                  />
+                  <h4 class="card-title">
+                    {{ item.Comp_Name }} {{ item.Car_Name }}
+                  </h4>
+                  <h5 class="card-subtitle mb-2 text-muted">
+                    {{ item.Color }}
+                  </h5>
+                  <p class="card-text">
+                    {{ item.City }}, {{ item.State }}, {{ item.ZipCode }}
+                  </p>
+                </div>
+                <button class="edit" (click)="onEdit(item)">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="delete" (click)="onDelete(item.Car_Id)">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="carList.length === 0">
+          <p>No Cars Available</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image -->
+<div
+  id="imageModal"
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  style="display: none"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Car Image</h5>
+        <button type="button" class="close" (click)="onCloseModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" class="img-fluid" alt="Car Image" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Car Form -->
+<div class="New" *ngIf="isNewUser === true">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <div class="row">
+          <div class="column-6">
+            <button class="btn btn-secondary" (click)="changeView()">
+              <i class="fa fa-arrow-left"></i>
+            </button>
+            <h4>{{ carObj.Car_Id === 0 ? "New Car" : "Edit Car" }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form class="row g-3 needs-validation" #formValue="ngForm">
+          <div class="col-md-4">
+            <label for="validationCustom01" class="form-label"
+              >Company Name</label
+            >
+            <input
+              type="text"
+              [(ngModel)]="carObj.Comp_Name"
+              #compName="ngModel"
+              name="compName"
+              class="form-control"
+              id="validationCustom01"
+              required
+            />
+            <div
+              *ngIf="compName.touched && compName.invalid"
+              class="text-danger"
+            >
+              <span>This is required</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label for="validationCustom02" class="form-label">Car Name</label>
+            <input
+              type="text"
+              [(ngModel)]="carObj.Car_Name"
+              #carName="ngModel"
+              name="carName"
+              class="form-control"
+              id="validationCustom02"
+              required
+            />
+            <div *ngIf="carName.touched && carName.invalid" class="text-danger">
+              <span>This is required</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label for="validationCustom03" class="form-label">Color</label>
+            <input
+              type="text"
+              [(ngModel)]="carObj.Color"
+              name="color"
+              class="form-control"
+              id="validationCustom03"
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="validationCustom04" class="form-label">City</label>
+            <input
+              type="text"
+              [(ngModel)]="carObj.City"
+              name="city"
+              class="form-control"
+              id="validationCustom04"
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="validationCustom05" class="form-label">State</label>
+            <select
+              class="form-select"
+              [(ngModel)]="carObj.State"
+              name="state"
+              id="validationCustom05"
+            >
+              <option selected disabled value="">Choose State</option>
+              <option>Maharashtra</option>
+              <option>Goa</option>
+              <option>Punjab</option>
+              <option>Gujrat</option>
+              <option>Rajasthan</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="validationCustom06" class="form-label">Zip</label>
+            <input
+              type="text"
+              [(ngModel)]="carObj.ZipCode"
+              name="zipcode"
+              class="form-control"
+              id="validationCustom06"
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="validationCustom07" class="form-label">Car Image</label>
+            <input
+              type="file"
+              (change)="onImageUpload($event)"
+              class="form-control"
+              id="validationCustom07"
+            />
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                [(ngModel)]="carObj.isAgree"
+                name="isAgree"
+                type="checkbox"
+                id="invalidCheck"
+                required
+              />
+              <label class="form-check-label" for="invalidCheck">
+                Agree to terms and conditions
+              </label>
+            </div>
+          </div>
+          <div class="col-12">
+            <button
+              class="btn btn-primary w-100"
+              type="submit"
+              [disabled]="formValue.invalid"
+              (click)="carObj.Car_Id === 0 ? onSave() : onUpdate()"
+            >
+              {{ carObj.Car_Id === 0 ? "Save Car" : "Update" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
